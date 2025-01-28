@@ -38,22 +38,14 @@ const contactController = {
           // Log the row for debugging
           console.log('Processing row:', row);
 
-          // Use the direct field names since they match your schema
+          // Use the direct field names but allow null values if fields are empty
           const contact = new Contact({
             employeeId,
-            companyName: row.companyName,
-            email: row.email,
-            phone: row.phone.toString(), // Convert number to string since phone is a String in schema
-            socialMedia: row.socialMedia
+            companyName: row.companyName || null,
+            email: row.email || null,
+            phone: row.phone ? row.phone.toString() : null, // Convert number to string if exists
+            socialMedia: row.socialMedia || null
           });
-
-          // Validate the document before saving
-          try {
-            await contact.validate();
-          } catch (validationError) {
-            console.error('Validation error:', validationError);
-            throw validationError;
-          }
 
           return await contact.save();
         })

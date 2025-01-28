@@ -7,16 +7,13 @@ const contactSchema = new mongoose.Schema({
     required: true
   },
   companyName: {
-    type: String,
-    required: true
+    type: String
   },
   email: {
-    type: String,
-    required: true
+    type: String
   },
   phone: {
-    type: String,
-    required: true
+    type: String
   },
   socialMedia: {
     type: String
