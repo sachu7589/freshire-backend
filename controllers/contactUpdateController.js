@@ -27,10 +27,11 @@ const getContactUpdates = async (req, res) => {
 // Update view count
 const updateView = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id, viewValue } = req.params;
+
         const update = await ContactUpdate.findByIdAndUpdate(
             id,
-            { $inc: { view: 1 } },
+            { view: viewValue },
             { new: true }
         );
 

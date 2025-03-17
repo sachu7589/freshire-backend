@@ -122,6 +122,79 @@ const contactController = {
     }
   },
 
+  // Get all contacts with view count statistics by employee
+  getAllContacts: async (req, res) => {
+    try {
+      // First, get all contacts with employee details
+      const contacts = await Contact.find({})
+        .populate({
+          path: 'employeeId',
+          select: 'name status', // Get the name and status from the User model
+          model: 'User'
+        })
+        .sort({ createdAt: -1 });
+
+      // Filter out contacts with null or undefined employeeId
+      const validContacts = contacts.filter(contact => 
+        contact.employeeId && contact.employeeId._id
+      );
+
+      // Use aggregation to get view count statistics grouped by employee
+      const viewStats = await Contact.aggregate([
+        {
+          $match: {
+            employeeId: { $ne: null } // Filter out null employeeIds
+          }
+        },
+        {
+          $group: {
+            _id: '$employeeId',
+            totalContacts: { $sum: 1 },
+            viewedCount: { $sum: { $cond: [{ $eq: ['$view', 1] }, 1, 0] } },
+            notViewedCount: { $sum: { $cond: [{ $ne: ['$view', 1] }, 1, 0] } }
+          }
+        },
+        {
+          $lookup: {
+            from: 'users', // The collection name in MongoDB (lowercase and plural)
+            localField: '_id',
+            foreignField: '_id',
+            as: 'employeeDetails'
+          }
+        },
+        {
+          $match: {
+            'employeeDetails': { $ne: [] } // Filter out records where lookup didn't find a user
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            totalContacts: 1,
+            viewedCount: 1,
+            notViewedCount: 1,
+            employeeName: { $arrayElemAt: ['$employeeDetails.name', 0] }
+          }
+        }
+      ]);
+
+      res.json({
+        success: true,
+        message: 'All contacts and view statistics retrieved successfully',
+        count: validContacts.length,
+        data: validContacts,
+        viewStatistics: viewStats
+      });
+    } catch (error) {
+      console.error('Error fetching all contacts:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error fetching all contacts',
+        error: error.message
+      });
+    }
+  },
+
   deleteContact: async (req, res) => {
     try {
       const contactId = req.params.id;

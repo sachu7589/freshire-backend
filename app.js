@@ -17,7 +17,7 @@ if (!fs.existsSync('uploads')) {
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://freshire-frontend.vercel.app', 'https://freshhire.vercel.app'],
+  origin: ['http://localhost:5173', 'https://freshire-frontend.vercel.app', 'https://freshhire.vercel.app', 'http://localhost:5174'],
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 app.use(express.json());

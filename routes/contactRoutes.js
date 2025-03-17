@@ -36,5 +36,6 @@ router.post('/upload/:employeeId', upload.single('file'), contactController.uplo
 router.get('/employee/:employeeId', contactController.getContactsByEmployee);
 router.delete('/:id', contactController.deleteContact);
 router.patch('/:id/view', contactController.updateView);
+router.get('/', contactController.getAllContacts);
 
 module.exports = router;

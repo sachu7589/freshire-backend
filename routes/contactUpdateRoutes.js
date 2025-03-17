@@ -9,7 +9,7 @@ router.get('/', getContactUpdates);
 router.post('/', createContactUpdate);
 
 // Update view count
-router.patch('/:id/view', updateView);
+router.patch('/:id/view/:viewValue', updateView);
 
 
 module.exports = router;
