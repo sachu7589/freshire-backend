@@ -96,8 +96,51 @@ const createContactUpdate = async (req, res) => {
     }
 };
 
+// Update existing contact update
+const updateContactUpdate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status, notes, view } = req.body;
+
+        // Validate required fields
+        if (!status || !notes) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields. Please provide status and notes.'
+            });
+        }
+
+        const update = await ContactUpdate.findByIdAndUpdate(
+            id,
+            { status, notes, view },
+            { new: true }
+        ).populate('employeeid', 'name email')
+         .populate('contactid', 'name email phone companyName');
+
+        if (!update) {
+            return res.status(404).json({
+                success: false,
+                message: 'Contact update not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Contact update updated successfully',
+            data: update
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error updating contact update',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     getContactUpdates,
     createContactUpdate,
-    updateView
+    updateView,
+    updateContactUpdate
 };
