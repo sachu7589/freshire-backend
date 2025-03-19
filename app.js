@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const userRoutes = require('./routes/userRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const contactUpdateRoutes = require('./routes/contactUpdateRoutes');
+const emailRoutes = require('./routes/emailRoutes');
 const { connectDB } = require('./config/db');
 const cors = require('cors');
 const fs = require('fs');
@@ -29,6 +30,7 @@ connectDB();
 app.use('/api/users', userRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/contact-updates', contactUpdateRoutes);
+app.use('/api/email', emailRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
